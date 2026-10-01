@@ -6,7 +6,7 @@
 |---|---|---|
 | Kadek Amelya Anasthasya Putri | 103072400073 | Pitfall 1 (The Network is Reliable) |
 | Talitha Fairuzzahwa Nirwasita | 103072400035 | Pitfall 3 (bandwidth is infinite) |
-| Aisya Fadhilllah | 103072430004 | [pitfall/bagian yang dikerjakan] |
+| Aisya Fadhilllah | 103072430004 | Pitfall 4 (Latency is zero) |
 | Firda Utami Sukman | 103072400147 | pitfall 4 (Single Point of Failure) |
 
 ## Pitfall 1: The Network is Reliable — ditulis oleh Kadek Amelya Anasthasya Putri
@@ -23,13 +23,25 @@
 
 ---
 
-## Pitfall 2: [nama pitfall] — ditulis oleh [nama]
+## Pitfall 2: latency is zero — ditulis oleh Aisya Fadhilllah
 
-(ulangi struktur di atas)
+**Bukti di skenario:** Tim menemukan didalam kodenya "Tidak ada timeout sama sekali pada pemanggilan antar service (modul pesanan memanggil modul pembayaran dan menunggu tanpa batas waktu).", "Saat trafik naik, satu server yang menangani semua modul (pesanan, pembayaran, notifikasi kurir) kewalahan karena semuanya berjalan di satu proses monolitik yang sama."
+
+**Kenapa ini keliru:** Karena di sistem FoodGo tim mengira kirim data lewat internet itu kecepatannya instan 0 detik seperti baca data di laptop sendiri. Karena mengira tidak akan pernah ada jeda/macet, mereka membuat modul pesanan menunggu modul pembayaran sampai dapat jawaban tanpa batas waktu, dan menumpuk semua fitur dalam satu server yang sama.
+
+**Dampak ke FoodGo:** Saat pembeli lagi ramai, jalur pembayaran mulai melambat. Karena tidak ada batas waktu tunggu (timeout), modul pesanan ikut crash karena terus-terusan menunggu tanpa kejelasan hingga antrian pembeli di belakangnya makin panjang. Karena semua fitur (pesanan, pembayaran, notifikasi) tinggal di satu proses yang sama yang dijalankan di satu server yang sama, kemacetan di bagian pembayaran bikin seluruh server kehabisan memori, crash, dan harus dimatikan lalu dinyalakan ulang secara manual (restart).
+
+**Solusi desain awal:** Untuk mengatasi masalah tersebut, tim perlu membatasi waktu tunggu panggilan antar-proses (misal 2–3 detik) agar saat proses pembayaran melambat, proses pesanan dapat segera memutus koneksi dan melepas thread CPU sehingga server tidak kehabisan memori atau mengalami crash. Selain itu, eksekusi tugas seperti pencarian driver atau pengiriman notifikasi sebaiknya dialihkan ke proses worker latar belakang melalui antrian agar proses pesanan dapat langsung menyelesaikan tugas utamanya dan siap melayani request berikutnya di server. Terakhir, melakukan pemisahan eksekusi modul-modul aplikasi ke dalam proses terpisah atau di server yang terpisah (decoupling), sehingga jika proses pembayaran mengalami kemacetan, proses pesanan dan navigasi katalog di server lain tetap dapat berjalan dengan normal.
+
+**Trade-off:** 
+1. Kompleksitas Kode pada Proses Aplikasi
+ Developer harus menulis logika tambahan di dalam proses aplikasi untuk mengelola kondisi saat panggilan membalas timeout (misalnya pembuatan fitur tombol coba lagi atau pembatalan transaksi secara otomatis).
+2. Konsistensi Data Tertunda
+ Karena proses tidak lagi menunggu semua eksekusi selesai secara instan di dalam server, status data tidak langsung berubah menjadi "Selesai" di detik yang sama, melainkan pengguna akan melihat status perantara seperti "Pesanan Sedang Diproses".
 
 ---
 
-## Pitfall 3: bandwidth is infinite — ditulis oleh [Talitha Fairuzzahwa Nirwasita]
+## Pitfall 3: bandwidth is infinite — ditulis oleh Talitha Fairuzzahwa Nirwasita
 
 **Bukti di skenario:** FoodGo mengalami lonjakan jumlah pesanan saat jam makan siang atau promo besar. Pada kondisi tersebut, aplikasi menjadi sangat lambat, beberapa permintaan mengalami timeout, dan satu server yang menangani modul pesanan, pembayaran, serta notifikasi kurir menjadi kewalahan.
 
@@ -62,4 +74,4 @@ Solusi ini berfungsi untuk mengatur waktu tunggu (urutan) pemoresesan permintaan
 
 ## Kesimpulan Kelompok
 
-[Ringkasan: jika FoodGo memperbaiki ketiga pitfall ini, apa arsitektur yang disarankan secara garis besar? Kaitkan dengan Tugas 2.]
+Jika FoodGo memperbaiki ketiga pitfall tersebut, arsitektur yang disarankan adalah memisahkan sistem monolitik menjadi beberapa service, seperti Order Service, Payment Service, dan Notification Service, yang dapat berjalan secara terpisah dan menggunakan beberapa server dengan Load Balancer untuk membagi beban. Komunikasi antar-service perlu menggunakan timeout agar suatu service tidak menunggu respons tanpa batas, serta retry dengan jeda ketika terjadi kegagalan komunikasi. Untuk proses yang tidak harus dilakukan secara langsung, seperti notifikasi kurir, dapat menggunakan Message Queue agar pekerjaan dapat diproses secara bertahap. Dengan rancangan ini, kegagalan atau beban tinggi pada satu bagian tidak langsung menyebabkan seluruh sistem berhenti, meskipun konsekuensinya adalah arsitektur menjadi lebih kompleks dan membutuhkan pengelolaan komunikasi serta konsistensi data antar-service.
