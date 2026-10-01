@@ -17,4 +17,4 @@
 
 | Tanggal | Tool AI | Prompt yang diberikan | Ringkasan saran/ide AI | Bagaimana diolah jadi tulisan/kode sendiri |
 |---|---|---|---|---|
-| ... | ... | ... | ... | ... |
+| 1 Oktober 2026 | ChatGPT | Menanyakan konsep Single Point of Failure (SPOF) pada kasus FoodGo | Dijelaskan bahwa SPOF adalah satu komponen yang jika mengalami masalah dapat membuat sistem lain ikut terganggu. Pada FoodGo, satu server yang menangani semua bagian sistem menjadi titik kegagalan karena jika server tersebut crash, beberapa layanan juga ikut berhenti. | Penjelasan tersebut digunakan untuk memahami konsep SPOF, kemudian diterapkan pada kasus FoodGo dan ditulis kembali dengan pemahaman sendiri. |
