@@ -4,22 +4,22 @@
 
 | Nama | NIM | Kontribusi |
 |---|---|---|
-| Kadek Amelya Anasthasya Putri | 103072400073 | [pitfall/bagian yang dikerjakan] |
+| Kadek Amelya Anasthasya Putri | 103072400073 | The Network is Reliable |
 | Talitha Fairuzzahwa Nirwasita | 103072400035 | [pitfall/bagian yang dikerjakan] |
 | Aisya Fadhilllah | 103072430004 | [pitfall/bagian yang dikerjakan] |
-| Firda Utami Sukman | 103072400147 | [pitfall/bagian yang dikerjakan] |
+| Firda Utami Sukman | 103072400147 | Single Point of FailureSingle Point of Failure |
 
-## Pitfall 1: [nama pitfall] — ditulis oleh [nama]
+## Pitfall 1: The Network is Reliable — ditulis oleh Kadek Amelya Anasthasya Putri
 
-**Bukti di skenario:** [kutip/paraphrase bagian skenario]
+**Bukti di skenario:** FoodGo memiliki asumsi dalam kode bahwa network is always reliable, no need for retry. Artinya, sistem menganggap jaringan selalu dapat diandalkan sehingga tidak menyiapkan mekanisme untuk menangani jika terjadi kegagalan komunikasi.
 
-**Kenapa ini keliru:** [penjelasan]
+**Kenapa ini keliru:** Dalam sistem terdistribusi, komunikasi antar-service dilakukan melalui jaringan yang tidak selalu berjalan dengan baik. Koneksi bisa mengalami gangguan, request bisa gagal, atau service yang dituju tidak memberikan respons. Karena itu, sistem tidak bisa menganggap setiap komunikasi antar-service pasti berhasil.
 
-**Dampak ke FoodGo:** [mekanisme kegagalan konkret]
+**Dampak ke FoodGo:** Ketika Modul Pesanan berkomunikasi dengan Modul Pembayaran dan terjadi gangguan jaringan, request bisa gagal atau tidak mendapat respons. Karena tidak ada mekanisme retry, kegagalan tersebut tidak bisa ditangani dengan baik. Saat trafik sedang tinggi, masalah pada banyak request dapat membuat proses pesanan semakin terganggu, aplikasi menjadi lambat, dan resource server semakin terbebani hingga dapat menyebabkan server crash.
 
-**Solusi desain awal:** [usulan solusi]
+**Solusi desain awal:** Menerapkan retry dengan exponential backoff pada komunikasi antar-service. Jika request gagal, sistem dapat mencoba kembali beberapa kali dengan jeda yang semakin meningkat. Selain itu, circuit breaker dapat digunakan untuk menghentikan sementara request ke service yang sedang bermasalah agar gangguan tidak semakin meluas. Timeout juga dapat digunakan agar sistem tidak menunggu respons tanpa batas.
 
-**Trade-off:** [apa yang dikorbankan/risiko dari solusi ini]
+**Trade-off:** Retry dapat menambah jumlah request dan beban pada service yang sedang bermasalah. Jika dilakukan terlalu sering, retry justru dapat memperparah kondisi dan menyebabkan cascading failure. Karena itu, jumlah retry dan jeda antar percobaan perlu dibatasi.
 
 ---
 
@@ -46,7 +46,7 @@ Pembatasan permintaan digunakan untuk membatasi jumlah permintaan yang diproses 
 Solusi ini berfungsi untuk mengatur waktu tunggu (urutan) pemoresesan permintaan yang berfungsi agar tidak semua request menumpuk dan di proses bersamaan. Konsekuensi dari solusi ini adalah pengguna mungkin perlu menunggu sedikit lebih lama sampai notifikasi atau proses tertentu selesai.
 ---
 
-## Pitfall 4: Single Point of Failure — ditulis oleh [Firda Utami Sukman]
+## Pitfall 4: Single Point of Failure — ditulis oleh Firda Utami Sukman
 
 **Bukti di skenario:** "satu server yang menangani semua bagian sistem (pesanan, pembayaran, notifikasi kurir) kewalahan karena semuanya berjalan di satu proses monolitik yang sama"
 
