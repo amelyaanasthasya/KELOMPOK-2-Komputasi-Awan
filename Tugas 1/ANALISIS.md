@@ -6,7 +6,7 @@
 |---|---|---|
 | Kadek Amelya Anasthasya Putri | 103072400073 | Pitfall 1 (The Network is Reliable) |
 | Talitha Fairuzzahwa Nirwasita | 103072400035 | Pitfall 3 (bandwidth is infinite) |
-| Aisya Fadhilllah | 103072430004 | Pitfall 4 (Latency is zero) |
+| Aisya Fadhilllah | 103072430004 | Pitfall 2 (Latency is zero) |
 | Firda Utami Sukman | 103072400147 | pitfall 4 (Single Point of Failure) |
 
 ## Pitfall 1: The Network is Reliable — ditulis oleh Kadek Amelya Anasthasya Putri
