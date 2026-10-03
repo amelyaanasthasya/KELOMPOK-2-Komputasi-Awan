@@ -1,6 +1,6 @@
 # Tugas 1 — Analisis Pitfall FoodGo
 
-**Kelompok:** [Kelompok 2]
+**Kelompok:** Kelompok 2
 
 | Nama | NIM | Kontribusi |
 |---|---|---|
