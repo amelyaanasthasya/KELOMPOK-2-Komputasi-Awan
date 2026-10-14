@@ -1,9 +1,9 @@
 # Jurnal Proses — Tugas 2
 
 ## 14 Oktober 2026
-- Opsi arsitektur yang dipertimbangkan: ...
-- Kenapa akhirnya pilih [SOA/Pub-Sub]: ...
-- Revisi diagram (versi 1 → versi 2, apa yang berubah dan kenapa): ...
+- Opsi arsitektur yang dipertimbangkan: Kombinasi SOA dan Pub-Sub 
+- Kenapa akhirnya pilih [SOA/Pub-Sub]: Kita memilih kombinasi karena Arsitektur kombinasi SOA dan Pub-Sub mengurangi coupling pada FoodGo dengan memisahkan sistem menjadi beberapa service yang dapat berjalan dan diperbarui secara terpisah. SOA digunakan untuk komunikasi langsung melalui API, sedangkan Pub-Sub menggunakan message broker untuk menyebarkan event, seperti OrderPaid, kepada Service Notifikasi Resto dan Service Kurir tanpa harus dipanggil satu per satu oleh Service Pesanan. Dengan demikian, perubahan pada satu service tidak harus mengganggu service lainnya, selama antarmuka dan format event tetap kompatibel.
+- Revisi diagram (versi 1 → versi 2, apa yang berubah dan kenapa): Di awal kami membuat dua jenis diagram. Pertama komponen dan interaksi untuk menunjukan komponen apa yang terhubung ke siapa. Yang kedua menunjukan urutak kejadian (langkah demi langkah). Akhirnya kami menggabungkan kedua diagram tersebut menjadi satu diagram lengkap yang menjelaskan segala alur dan komponen.
 
 ## Log Penggunaan AI (Level 2)
 
@@ -11,4 +11,6 @@
 
 | Tanggal | Tool AI | Prompt yang diberikan | Ringkasan saran/ide AI | Bagaimana diolah jadi tulisan/kode sendiri |
 |---|---|---|---|---|
-| ... | ... | ... | ... | ... |
+| 14 Oktober 2026 | ChatGPT | Jelaskan secara singkat gambaran penggunaan sintaks pada mermaid | Sintaks Mermaid yang digunakan adalah flowchart TD, yaitu untuk membuat diagram alur dari atas ke bawah (Top Down). Berikut gambaran sintaksnya. flowchart TD → Mengatur arah diagram dari atas ke bawah. C Pelanggan → Membuat kotak dengan nama Pelanggan. Huruf C adalah identitas komponennya. B(Message Broker) → Membuat komponen Message Broker berbentuk silinder. C --> API → Membuat panah dari Pelanggan ke API Gateway. C -->1. HTTP request pesanan API → Membuat panah dengan keterangan proses komunikasi. O --> K → Menunjukkan hubungan antara Service Pesanan dan Service Katalog Resto. --> → Menunjukkan arah alur atau komunikasi antarkomponen. (...) → Menambahkan keterangan pada panah, seperti jenis permintaan atau respons. | Setiap komponen ditulis menggunakan identitas dan bentuknya, sedangkan panah digunakan untuk menunjukkan alur komunikasi. Angka pada keterangan panah menunjukkan urutan proses dari pelanggan membuat pesanan hingga proses kurir. |
+| 14 Oktober 2026 | ChatGPT | penjelasan perbedaan SOA dan Pub-Sub | AI membandingkan keduanya (sinkron vs asinkron, coupling, broker) | AI menjelaskan perbedaan SOA dan Pub-Sub. Saya cocokkan dengan materi Pekan 2 dan memakainya untuk memahami konsep sebelum menulis analisis sendiri. |
+| 14 Oktober 2026 | ChatGPT | Apa itu coupling? | AI menjelaskan bahwa coupling adalah tingkat ketergantungan antara modul dalam sistem. Semakin tinggi ketergantungan antarmodul, semakin besar kemungkinan gangguan pada satu modul memengaruhi modul lainnya. | Kami gunakan untuk memahami konsep coupling, kemudian diterapkan dalam analisis arsitektur FoodGo dengan menjelaskan bagaimana SOA dan Pub-Sub dapat mengurangi ketergantungan antarlayanan. |
