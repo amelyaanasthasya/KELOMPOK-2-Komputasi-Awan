@@ -44,7 +44,19 @@ flowchart TD
     D -->|12. Publish CourierAssigned| B
 ```
 
-## PENJELASAN ANALISIS (DILA)
+## PENJELASAN DIAGRAM
+1. Pelanggan memesan makanan (Langkah 1-2)
+Pelanggan membuat pesanan lewat aplikasi mobile yang terhubung ke `API Gateway` melalui HTTP request pesanan. Kemudian `API Gateway` nya akan meneruskan request tersebut secara sinkron ke `Service Pesanan` untuk membuat entitas pesanan baru dengan status `PENDING`.
+2. Pengecekan katalog & menu  (Langkah 3-4)
+`Service Pesanan` akan memanggil atau request ke `Service Katalog Resto` secara sinkron untuk memastikan/validasi ketersediaan menu, harga terbaru, dan status operasional restoran. Kemudian `Service Katalog Resto` akan mengembalikan response data menu yang benar ke `Service Pesanan`.
+3. Pembayaran (Langkah 5-6)
+`Service Pesanan` melakukan request pembayaran secara sinkron ke `Service Pembayaran` yang proses transaksinya dilakukan melalui payment gateway. Kemudian `Service Pembayaran` akan merespons dengan status transaksi (berhasil/gagal), jika berhasil status pesanan akan diperbarui menjadi `PAID`.
+4. Publish Pembayaran (Langkah 7)
+Setelah pembayaran dikonfirmasi, `Service Pesanan` akan menerbitkan atau mempublish pesan `OrderPaid` ke `Message Broker`. Langkah itu dilakukan secara asinkron(non-blocking), sehingga `Service Pesanan` bisa langsung memberikan konfirmasi awal ke pelanggan tanpa harus nunggu kesiapan restoran atau kurir.
+5. Notifikasi Restoran & Kurir (Langkah 8-9)
+`Service Notifikasi Resto` dan `Service Kurir dan Notifikasi` yang bertindak sebagai subscriber menerima notifikasi atau pesan `OrderPaid` dari `Message Broker`. Kemudian `Service Notifikasi Resto` akan menampilkan pesanan masuk di dashboard restoran agar makanannya bisa mulai disiapkan oleh restoran.
+6. Konfirmasi Restoran & Penugasan Kurir (Langkah 10-12)
+Setelah restoran mengkonfirmasi pesanan, `Service Notifikasi Resto` akan mempublikasikan pesan `RestaurantConfirmed` ke `Message Broker`. `Service Kurir dan Notifikasi` akan menerima pesan tersebut, lalu dia akan secara otomatis mencocokkan dan menugaskan kurir terdekat serta menerbitkan pesan `CourierAssigned` ke `Message Broker`.
 
 
 ## ANALISIS MASALAH COUPLING DAN TRADE-OFF
