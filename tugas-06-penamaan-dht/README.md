@@ -48,4 +48,12 @@ Urutan Node dan Kurir yang bertanggungjawab setelah perubahan Topologi:
 - node-surabaya-1 (id = 136), kurir-003 (132)
 
 # DIAGRAM RING
-Diagram Ring terdapat pada file "bukti"
+### Diagram Topologi Awal
+![alt text](bukti/assets/Diagram_Topologi_Awal.png)
+
+### Diagram Topologi Join
+![alt text](bukti/assets/Diagram_Topologi_Join.png)
+
+### Diagram Topologi Setelah Leave
+![alt text](bukti/assets/DIagram_Topologi_Setelah_Leave.png)
+
